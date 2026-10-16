@@ -1,5 +1,8 @@
 name: 'SDK-Fabric Java Publish'
 description: 'SDK-Fabric GitHub action to publish a Java release'
+branding:
+  icon: 'upload'
+  color: 'blue'
 inputs:
   typehub_version:
     description: 'The version to set for the Maven project'
