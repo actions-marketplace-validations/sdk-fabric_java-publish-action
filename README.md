@@ -1,2 +1,5 @@
 
-# SDK-Fabric Java Publish Action
+# SDK-Fabric Java Publish
+
+This action is part of the [SDK-Fabric](https://sdk-fabric.org/) project which provides
+an open infrastructure to automatically generate SDKs.
