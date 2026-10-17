@@ -5,7 +5,7 @@ branding:
   color: 'green'
 inputs:
   typehub_version:
-    description: 'The version to set for the Maven project'
+    description: 'The provided TypeHub version'
     required: true
   gpg_private_key:
     description: 'GPG Private Key content'
@@ -22,22 +22,24 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: Set up Java
       uses: actions/setup-java@v6
       with:
         java-version: '25'
         distribution: 'temurin'
     - name: Install Maven 3.9.9
+      shell: bash
       run: |
         MVN_VERSION="3.9.9"
         wget -q https://archive.apache.org/dist/maven/maven-3/${MVN_VERSION}/binaries/apache-maven-${MVN_VERSION}-bin.tar.gz
         tar -xzf apache-maven-${MVN_VERSION}-bin.tar.gz
         sudo mv apache-maven-${MVN_VERSION} /opt/maven
         echo "/opt/maven/bin" >> $GITHUB_PATH
-      shell: bash
     - name: Update version
-      run: mvn versions:set -DnewVersion="${{ inputs.typehub_version }}"
       shell: bash
+      run: mvn versions:set -DnewVersion="${{ inputs.typehub_version }}"
     - name: Import GPG key
       id: import-gpg
       uses: crazy-max/ghaction-import-gpg@v6
@@ -46,8 +48,8 @@ runs:
         passphrase: ${{ inputs.gpg_passphrase }}
         trust_level: ultimate
     - name: Publish package
-      run: mvn --batch-mode clean deploy -Dgpg.keyname=${{ steps.import-gpg.outputs.fingerprint }}
       shell: bash
+      run: mvn --batch-mode clean deploy -Dgpg.keyname=${{ steps.import-gpg.outputs.fingerprint }}
       env:
         MAVEN_USERNAME: ${{ inputs.sonatype_username }}
         MAVEN_PASSWORD: ${{ inputs.sonatype_password }}
